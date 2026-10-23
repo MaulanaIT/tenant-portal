@@ -47,7 +47,6 @@ export async function login(
   redirect("/dashboard");
 }
 
-export async function logout() {
+export async function signOut() {
   (await cookies()).delete(SESSION_COOKIE);
-  redirect("/login");
 }

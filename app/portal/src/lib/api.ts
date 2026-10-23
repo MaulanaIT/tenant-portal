@@ -1,39 +1,18 @@
 import "server-only";
 import { redirect } from "next/navigation";
+import type { CurrentUser } from "./members-types";
 import { getSessionToken } from "./session";
+
+export type { CurrentUser, Tenant, TenantRole } from "./members-types";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
 
-export type TenantRole = "ADMIN" | "MEMBER";
-
-export type Tenant = {
-  id: string;
-  name: string;
-  slug: string;
-  role: TenantRole;
-};
-
-export type CurrentUser = {
-  id: string;
-  username: string;
-  email: string;
-  name: string;
-  tenants: Tenant[];
-};
-
-/**
- * Calls the API as the signed-in user. Pass `tenantId` for tenant-scoped
- * endpoints: it's sent as `x-tenant-id`, which the API uses as the active tenant.
- */
 export async function apiFetch(
   path: string,
-  { token, tenantId, ...init }: RequestInit & { token: string; tenantId?: string },
+  { token, ...init }: RequestInit & { token: string },
 ) {
   const headers = new Headers(init.headers);
   headers.set("Authorization", `Bearer ${token}`);
-  if (tenantId) {
-    headers.set("x-tenant-id", tenantId);
-  }
   if (init.body) {
     headers.set("Content-Type", "application/json");
   }

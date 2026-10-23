@@ -1,38 +1,64 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useTransition } from "react";
-import type { Tenant } from "@/lib/api";
+import { ChevronDownIcon } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useId, useTransition } from "react";
+import type { Tenant } from "@/lib/members-types";
+
+const KEPT_PARAMS = ["view"];
 
 export function TenantSwitcher({
   tenants,
   activeSlug,
 }: {
   tenants: Tenant[];
-  activeSlug: string;
+  activeSlug: string | null;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [pending, startTransition] = useTransition();
+  const id = useId();
 
   return (
-    <label className="flex items-center gap-2 text-sm">
-      <span className="sr-only">Switch tenant</span>
-      <select
-        value={activeSlug}
-        disabled={pending || tenants.length < 2}
-        onChange={(event) => {
-          const slug = event.target.value;
-          startTransition(() => router.push(`/dashboard?tenant=${slug}`));
-        }}
-        className="rounded-md border border-zinc-300 bg-white py-1.5 pl-3 pr-8 text-sm font-medium shadow-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-70 dark:border-zinc-700 dark:bg-zinc-900"
-      >
-        {tenants.map((tenant) => (
-          <option key={tenant.id} value={tenant.slug}>
-            {tenant.name} · {tenant.role === "ADMIN" ? "Admin" : "Member"}
-          </option>
-        ))}
-      </select>
-      {pending && <span className="text-xs text-zinc-500">Switching…</span>}
-    </label>
+    <>
+      <label htmlFor={id} className="sr-only">
+        Organization
+      </label>
+      <div className="relative min-w-0 flex-[0_1_auto]">
+        <select
+          id={id}
+          value={activeSlug ?? ""}
+          aria-busy={pending}
+          disabled={pending || (activeSlug !== null && tenants.length < 2)}
+          onChange={(event) => {
+            const current = new URLSearchParams(window.location.search);
+            const next = new URLSearchParams({ tenant: event.target.value });
+            for (const key of KEPT_PARAMS) {
+              const value = current.get(key);
+              if (value) {
+                next.set(key, value);
+              }
+            }
+            startTransition(() => router.push(`${pathname}?${next}`));
+          }}
+          className="h-9 w-full max-w-full cursor-pointer appearance-none truncate rounded-md border border-input bg-background pr-9 pl-3 text-sm font-medium text-foreground shadow-elev-sm transition-colors duration-150 ease-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed disabled:opacity-70 motion-reduce:transition-none max-sm:h-10"
+        >
+          {activeSlug === null && (
+            <option value="" disabled>
+              Choose an organization
+            </option>
+          )}
+          {tenants.map((tenant) => (
+            <option key={tenant.id} value={tenant.slug}>
+              {tenant.name} · {tenant.role === "ADMIN" ? "Admin" : "Member"}
+            </option>
+          ))}
+        </select>
+        <ChevronDownIcon
+          aria-hidden="true"
+          className="pointer-events-none absolute top-1/2 right-3 size-4 -translate-y-1/2 text-muted-foreground"
+        />
+      </div>
+    </>
   );
 }

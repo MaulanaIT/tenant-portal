@@ -10,9 +10,13 @@ out
 .next
 *.tsbuildinfo
 next-env.d.ts
+.swc
 
 # testing
 coverage
+test-results/
+playwright-report/
+blob-report/
 
 # env files (keep the example committed)
 .env*

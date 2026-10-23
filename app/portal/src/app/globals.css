@@ -1,25 +1,178 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (@media (prefers-color-scheme: dark));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-geist-sans);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-hover: var(--destructive-hover);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-popover-border: var(--popover-border);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-page: var(--page);
+  --color-link: var(--link);
+  --color-selected: var(--selected);
+  --color-selected-border: var(--selected-border);
+  --color-match-ring: var(--match-ring);
+  --color-badge-admin-bg: var(--badge-admin-bg);
+  --color-badge-admin-fg: var(--badge-admin-fg);
+  --color-badge-member-bg: var(--badge-member-bg);
+  --color-badge-member-fg: var(--badge-member-fg);
+  --color-status-active: var(--status-active);
+  --color-status-invited: var(--status-invited);
+  --color-status-suspended: var(--status-suspended);
+  --color-overlay: var(--overlay);
+  --color-alert-error-bg: var(--alert-error-bg);
+  --color-alert-error-border: var(--alert-error-border);
+  --color-alert-error-fg: var(--alert-error-fg);
+  --shadow-elev-sm: var(--elev-sm);
+  --shadow-elev-lg: var(--elev-lg);
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  color-scheme: light dark;
+  --radius: 0.625rem;
+  --page: #fafafa;
+  --background: #ffffff;
+  --card: #ffffff;
+  --card-foreground: var(--foreground);
+  --popover: #ffffff;
+  --popover-foreground: var(--foreground);
+  --popover-border: #e4e4e7;
+  --foreground: #171717;
+  --muted: #f4f4f5;
+  --muted-foreground: #67676f;
+  --secondary: var(--muted);
+  --secondary-foreground: var(--foreground);
+  --accent: var(--muted);
+  --accent-foreground: var(--foreground);
+  --border: #e4e4e7;
+  --input: #85858e;
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-foreground: #ffffff;
+  --link: #4f46e5;
+  --ring: #6366f1;
+  --destructive: #dc2626;
+  --destructive-hover: #b91c1c;
+  --destructive-foreground: #ffffff;
+  --selected: #eef2ff;
+  --selected-border: #c7d2fe;
+  --match-ring: #6366f1;
+  --badge-admin-bg: #e0e7ff;
+  --badge-admin-fg: #3730a3;
+  --badge-member-bg: #f4f4f5;
+  --badge-member-fg: #3f3f46;
+  --status-active: #059669;
+  --status-invited: #d97706;
+  --status-suspended: #f43f5e;
+  --overlay: rgba(0, 0, 0, 0.5);
+  --elev-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --elev-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --toast-success-bg: #ecfdf3;
+  --toast-success-border: #bffcd9;
+  --toast-success-fg: #007a29;
+  --toast-error-bg: #fff0f0;
+  --toast-error-border: #ffe0e1;
+  --toast-error-fg: #cc0000;
+  --alert-error-bg: #fef2f2;
+  --alert-error-border: #fecaca;
+  --alert-error-fg: #991b1b;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --page: #09090b;
+    --background: #18181b;
+    --card: #18181b;
+    --popover: #27272a;
+    --popover-border: #3f3f46;
     --foreground: #ededed;
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;
+    --border: #27272a;
+    --input: #71717a;
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --primary-foreground: #ffffff;
+    --link: #818cf8;
+    --ring: #818cf8;
+    --destructive: #dc2626;
+    --destructive-hover: #b91c1c;
+    --destructive-foreground: #ffffff;
+    --selected: rgba(99, 102, 241, 0.12);
+    --selected-border: rgba(99, 102, 241, 0.35);
+    --match-ring: #818cf8;
+    --badge-admin-bg: rgba(99, 102, 241, 0.15);
+    --badge-admin-fg: #a5b4fc;
+    --badge-member-bg: #27272a;
+    --badge-member-fg: #d4d4d8;
+    --status-active: #10b981;
+    --status-invited: #f59e0b;
+    --status-suspended: #f43f5e;
+    --overlay: rgba(0, 0, 0, 0.7);
+    --elev-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --elev-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+    --toast-success-bg: #001f0f;
+    --toast-success-border: #003d1c;
+    --toast-success-fg: #59f3a6;
+    --toast-error-bg: #2d0607;
+    --toast-error-border: #4d0408;
+    --toast-error-fg: #ff9ea1;
+    --alert-error-bg: rgba(220, 38, 38, 0.1);
+    --alert-error-border: rgba(220, 38, 38, 0.35);
+    --alert-error-fg: #fecaca;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
+html [data-sonner-toaster][data-sonner-theme] {
+  --success-bg: var(--toast-success-bg);
+  --success-border: var(--toast-success-border);
+  --success-text: var(--toast-success-fg);
+  --error-bg: var(--toast-error-bg);
+  --error-border: var(--toast-error-border);
+  --error-text: var(--toast-error-fg);
+  --normal-bg: var(--popover);
+  --normal-border: var(--popover-border);
+  --normal-text: var(--foreground);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring;
+  }
+  body {
+    @apply bg-page text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }

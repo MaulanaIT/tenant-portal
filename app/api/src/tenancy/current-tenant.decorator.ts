@@ -1,24 +1,17 @@
 import {
-  BadRequestException,
   createParamDecorator,
   ExecutionContext,
+  InternalServerErrorException,
 } from '@nestjs/common';
-import type { Request } from 'express';
+import type { TenantContext } from './tenant-context.js';
+import type { TenantRequest } from './tenant-member.guard.js';
 
-export const TENANT_HEADER = 'x-tenant-id';
-
-/**
- * The active tenant's id, taken from the `x-tenant-id` header.
- * The API gateway validates this header against the session before requests
- * reach the API (see AGENTS.md), so it can be used as-is.
- */
 export const CurrentTenant = createParamDecorator(
-  (_data: unknown, context: ExecutionContext): string => {
-    const request = context.switchToHttp().getRequest<Request>();
-    const tenantId = request.header(TENANT_HEADER);
-    if (!tenantId) {
-      throw new BadRequestException(`Missing ${TENANT_HEADER} header`);
+  (_data: unknown, context: ExecutionContext): TenantContext => {
+    const request = context.switchToHttp().getRequest<TenantRequest>();
+    if (!request.tenant) {
+      throw new InternalServerErrorException();
     }
-    return tenantId;
+    return request.tenant;
   },
 );

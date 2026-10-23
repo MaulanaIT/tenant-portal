@@ -1,0 +1,62 @@
+@import "@xyflow/react/dist/style.css" layer(base);
+
+@layer base {
+  .react-flow {
+    --xy-background-color: var(--background);
+    --xy-background-pattern-color: var(--border);
+    --xy-edge-stroke: var(--muted-foreground);
+    --xy-edge-stroke-width: 1.5;
+    --xy-node-border-radius: var(--radius-lg);
+    --xy-controls-button-background-color: var(--card);
+    --xy-controls-button-background-color-hover: var(--muted);
+    --xy-controls-button-color: var(--foreground);
+    --xy-controls-button-color-hover: var(--foreground);
+    --xy-controls-button-border-color: var(--border);
+    --xy-attribution-background-color: var(--card);
+  }
+
+  .react-flow__node:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .react-flow__node-tenant,
+  .react-flow__node-member {
+    border-radius: var(--radius-lg);
+  }
+
+  .react-flow__node-roleGroup {
+    border-radius: var(--radius-xl);
+  }
+
+  .react-flow__attribution {
+    margin: 0;
+    padding: 2px 8px;
+    border-top: 1px solid var(--border);
+    border-left: 1px solid var(--border);
+    border-top-left-radius: var(--radius-md);
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  .react-flow__attribution a {
+    color: var(--muted-foreground);
+    font-weight: 500;
+    transition: color 150ms ease-out;
+  }
+
+  .react-flow__attribution a:hover {
+    color: var(--foreground);
+  }
+
+  .react-flow__attribution a:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .react-flow__attribution a {
+      transition: none;
+    }
+  }
+}

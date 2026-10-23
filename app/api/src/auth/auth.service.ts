@@ -5,6 +5,9 @@ import { PrismaService } from '../prisma/prisma.service.js';
 import type { JwtPayload } from './auth.guard.js';
 import type { LoginDto } from './login.dto.js';
 
+const UNKNOWN_USER_HASH =
+  '$2b$10$0.aB/EEDQol1Yi/aUMXIU.nzyzGbtvSL5bLFnSqCkILtR1fUPjyDO';
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -15,20 +18,17 @@ export class AuthService {
   async login({ username, password }: LoginDto) {
     const user = await this.prisma.user.findUnique({
       where: { username },
-      include: { tenants: { select: { tenantId: true, role: true } } },
+      select: { id: true, username: true, passwordHash: true },
     });
-    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+    const passwordMatches = await bcrypt.compare(
+      password,
+      user?.passwordHash ?? UNKNOWN_USER_HASH,
+    );
+    if (!user || !passwordMatches) {
       throw new UnauthorizedException('Invalid username or password');
     }
 
-    const payload: JwtPayload = {
-      sub: user.id,
-      username: user.username,
-      tenants: user.tenants.map(({ tenantId, role }) => ({
-        id: tenantId,
-        role,
-      })),
-    };
+    const payload: JwtPayload = { sub: user.id, username: user.username };
     return { accessToken: await this.jwt.signAsync(payload) };
   }
 

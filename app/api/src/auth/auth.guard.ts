@@ -6,13 +6,10 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import type { Request } from 'express';
-import type { TenantRole } from '../generated/prisma/client.js';
 
 export type JwtPayload = {
   sub: string;
   username: string;
-  // Memberships are embedded at login so guards don't hit the database on every request
-  tenants: { id: string; role: TenantRole }[];
 };
 
 export type AuthenticatedRequest = Request & { user: JwtPayload };

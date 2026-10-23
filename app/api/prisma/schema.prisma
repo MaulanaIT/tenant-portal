@@ -14,12 +14,19 @@ enum TenantRole {
   MEMBER
 }
 
+enum UserStatus {
+  ACTIVE
+  INVITED
+  SUSPENDED
+}
+
 model User {
   id           String       @id @default(uuid())
   username     String       @unique
   email        String       @unique
   name         String
   passwordHash String       @map("password_hash")
+  status       UserStatus   @default(ACTIVE)
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @updatedAt @map("updated_at")
   tenants      TenantUser[]

@@ -41,43 +41,43 @@ A starting point is already in place: `app/api/src/members` (API) and `app/porta
 
 ### 1. Display organization members
 
-- [ ] Page that lists the current organization's members, showing for each:
-  - [ ] Member name
-  - [ ] Email address
-  - [ ] Role (Admin or Member)
-  - [ ] Account status
-- [ ] Loading state
-- [ ] Error state
-- [ ] Empty state
+- [x] Page that lists the current organization's members, showing for each:
+  - [x] Member name
+  - [x] Email address
+  - [x] Role (Admin or Member)
+  - [x] Account status
+- [x] Loading state
+- [x] Error state
+- [x] Empty state
 
 ### 2. Update a member's role
 
-- [ ] An authorized administrator can change a member's role
-- [ ] Only supported role values are accepted
-- [ ] The UI reflects a successful update
-- [ ] A failed update shows an appropriate error
-- [ ] An administrator can't accidentally remove their own admin access
+- [x] An authorized administrator can change a member's role
+- [x] Only supported role values are accepted
+- [x] The UI reflects a successful update
+- [x] A failed update shows an appropriate error
+- [x] An administrator can't accidentally remove their own admin access
 
 ### 3. Enforce authorization and tenant isolation
 
-- [ ] Users can only access members of a tenant they're authorized for
-- [ ] The server establishes and validates the tenant context; it never trusts a client-supplied tenant ID
-- [ ] Only authorized administrators can update member roles
-- [ ] Invalid or unauthorized requests don't modify data
+- [x] Users can only access members of a tenant they're authorized for
+- [x] The server establishes and validates the tenant context; it never trusts a client-supplied tenant ID
+- [x] Only authorized administrators can update member roles
+- [x] Invalid or unauthorized requests don't modify data
 
 ### 4. Validate and persist changes
 
-- [ ] Validate request payloads on the server
-- [ ] Persist successful role changes in PostgreSQL
-- [ ] Return appropriate HTTP status codes and useful error responses
-- [ ] Handle missing members
-- [ ] Handle invalid role values
+- [x] Validate request payloads on the server
+- [x] Persist successful role changes in PostgreSQL
+- [x] Return appropriate HTTP status codes and useful error responses
+- [x] Handle missing members
+- [x] Handle invalid role values
 
 ### 5. Testing
 
-- [ ] Meaningful automated tests covering the functionality
-- [ ] Tests for authorization
-- [ ] Tests for tenant isolation
+- [x] Meaningful automated tests covering the functionality
+- [x] Tests for authorization
+- [x] Tests for tenant isolation
 
 ## To do: hosting
 

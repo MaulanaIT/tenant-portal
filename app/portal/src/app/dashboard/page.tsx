@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { logout } from "../actions";
 import { getCurrentUser, type Tenant } from "@/lib/api";
 import { getDashboardData, type DashboardData } from "@/lib/sample-data";
-import { TenantSwitcher } from "./tenant-switcher";
+import { AppHeader, AppHeaderSkeleton } from "./app-header";
 
 export const metadata: Metadata = { title: "Dashboard · Tenant Portal" };
 
@@ -34,29 +33,7 @@ async function Dashboard({
 
   return (
     <>
-      <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
-          <div className="flex items-center gap-4">
-            <div className="flex size-8 items-center justify-center rounded-md bg-indigo-600 text-sm font-semibold text-white">
-              T
-            </div>
-            {tenant && (
-              <TenantSwitcher tenants={user.tenants} activeSlug={tenant.slug} />
-            )}
-          </div>
-          <div className="flex items-center gap-3 text-sm">
-            <span className="text-zinc-600 dark:text-zinc-400">
-              {user.name}{" "}
-              <span className="text-zinc-400">@{user.username}</span>
-            </span>
-            <form action={logout}>
-              <button className="rounded-md border border-zinc-300 px-3 py-1.5 font-medium hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800">
-                Sign out
-              </button>
-            </form>
-          </div>
-        </div>
-      </header>
+      <AppHeader user={user} tenant={tenant ?? null} active="overview" />
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
         {tenant ? (
@@ -204,14 +181,17 @@ function StatusBadge({ status }: { status: DashboardData["projects"][number]["st
 
 function DashboardSkeleton() {
   return (
-    <div className="mx-auto w-full max-w-6xl animate-pulse space-y-6 px-4 py-8">
-      <div className="h-8 w-56 rounded bg-zinc-200 dark:bg-zinc-800" />
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="h-28 rounded-xl bg-zinc-200 dark:bg-zinc-800" />
-        ))}
+    <>
+      <AppHeaderSkeleton />
+      <div className="mx-auto w-full max-w-6xl animate-pulse space-y-6 px-4 py-8">
+        <div className="h-8 w-56 rounded bg-zinc-200 dark:bg-zinc-800" />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="h-28 rounded-xl bg-zinc-200 dark:bg-zinc-800" />
+          ))}
+        </div>
+        <div className="h-64 rounded-xl bg-zinc-200 dark:bg-zinc-800" />
       </div>
-      <div className="h-64 rounded-xl bg-zinc-200 dark:bg-zinc-800" />
-    </div>
+    </>
   );
 }
