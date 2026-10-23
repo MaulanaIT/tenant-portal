@@ -18,5 +18,9 @@
   "packageManager": "pnpm@11.8.0",
   "engines": {
     "node": ">=20.19"
+  },
+  "dependencies": {
+    "@neon/config": "^1.9.3",
+    "@neon/env": "^1.6.4"
   }
 }

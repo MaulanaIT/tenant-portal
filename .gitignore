@@ -31,3 +31,4 @@ npm-debug.log*
 
 # generated Prisma client
 app/api/src/generated
+.neon
