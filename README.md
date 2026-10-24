@@ -13,7 +13,7 @@ Both apps live in one pnpm workspace and share a single `.env` at the repo root.
 
 Assessment submission notes: see [SUBMISSION.md](SUBMISSION.md) (includes ["Where I disagreed with the repo or my AI"](SUBMISSION.md#where-i-disagreed-with-the-repo-or-my-ai)).
 
-**Live URLs:** not deployed yet. The hosting step was skipped; see [Incomplete requirements and limitations](SUBMISSION.md#incomplete-requirements-and-limitations).
+**Live URLs:** portal https://tenant-portal-navy.vercel.app · API https://tenant-portal-api-two.vercel.app (both on Vercel, PostgreSQL on Neon; see [SUBMISSION.md](SUBMISSION.md)). Sign in as `alice` / `123456`.
 
 ## Prerequisites
 

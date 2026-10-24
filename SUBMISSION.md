@@ -1,6 +1,6 @@
 # Submission notes: tenant members page
 
-The fork URL and reviewer access go in the submission message at the end of this file. Hosting was skipped at the project owner's request, so there are no live URLs yet (see [Incomplete requirements and limitations](#incomplete-requirements-and-limitations)).
+**Live:** portal https://tenant-portal-navy.vercel.app · API https://tenant-portal-api-two.vercel.app · repository https://github.com/MaulanaIT/tenant-portal. Sign in with any seeded user and the password `123456` (for example `alice`). Both apps run on Vercel and the database on Neon Postgres instead of Railway; see Hosting under [Design decisions and assumptions](#design-decisions-and-assumptions).
 
 ## What I implemented
 
@@ -68,9 +68,16 @@ Not shipped: the optional P7b polish (chart legend, stacked mobile cards, small-
 - **API test harness.** The API e2e tests run the real Nest app (guards, pipes, controllers) over supertest against a Prisma mock, because CI has no PostgreSQL. The Playwright suite is the real-database check.
 - **Local database: Prisma's `prisma dev` server instead of Docker Compose.** The development machine has no Docker, so I ran PostgreSQL with Prisma 7's built-in local server and pointed `DATABASE_URL` at its TCP URL. `docker-compose.yml`, `pnpm db:up` and `.env.example` are unchanged and remain the README's default; the README adds the `prisma dev` steps as an alternative. Migrations and the seed are the same for both. `prisma dev` runs PostgreSQL as PGlite, an embedded single-process build, so it is fine for development and the Playwright suite but is not evidence of how the lock behaves under real concurrent connections; Docker Compose (PostgreSQL 17) remains the reference setup.
 
+**Hosting**
+
+- **Vercel for both apps and Neon for PostgreSQL, instead of Railway.** TASKS.md puts the API and database on Railway, but Railway's free option is a 30-day trial. Vercel Hobby and Neon Free are permanent free tiers that need no card. The portal and the API are two Vercel projects (Root Directory `app/portal` and `app/api`); the API uses Vercel's NestJS preset.
+- **`app/api/src/main.ts` exports the Express handler on Vercel.** Vercel's NestJS launcher stubs `server.listen()` and never calls its callback, so the original top-level `await bootstrap()` never settled and every request failed with `FUNCTION_INVOCATION_FAILED`. The app now calls `app.init()` and default-exports the Express instance when `VERCEL` is set, and keeps calling `listen(port, host)` everywhere else, so local development and `node dist/main` are unchanged.
+- **Database URLs.** The API uses Neon's pooled URL at runtime. Migrations and the seed ran once from the development machine with the direct (unpooled) URL. `neon.ts` and the `@neon/config` / `@neon/env` root dependencies are only used by the Neon CLI that linked and checked the project.
+- **Cold starts.** Neon suspends idle compute after 5 minutes and Vercel functions scale to zero, so the first request after a quiet period takes a few seconds.
+
 **Dependencies (portal)**
 
-The API gained none apart from the Jest test runner.
+The API gained none apart from the Jest test runner. The root `package.json` gained `@neon/config` and `@neon/env` for the Neon CLI (see Hosting under [Design decisions and assumptions](#design-decisions-and-assumptions)).
 
 | Package | Why |
 |---|---|
@@ -179,6 +186,12 @@ Run on 2026-10-23 against the local stack (API on `API_PORT` 3100, portal on 300
   - chart rendering and keyboard use;
   - expired sessions;
   - axe scans in light and dark.
+
+**Against Neon and the live deployment**
+
+- Before deploying, the API (`node dist/main.js`) was run locally against the Neon pooled URL and a production build of the portal was pointed at it. A Playwright script signed in as alice, listed Acme, promoted Bob, reloaded to confirm the role persisted in Neon, demoted him back through the confirmation dialog, and opened the chart. The browser never called the API directly.
+- On the live deployment: the portal redirects `/` to `/dashboard` and serves `/login` (200), the API answers `GET /` with "Hello World!", `POST /auth/login` as alice returns an `accessToken`, and the members page renders for alice.
+- The Vercel 500 (`FUNCTION_INVOCATION_FAILED`) was reproduced locally with `vercel build` and the real `@vercel/node` launcher before the `main.ts` change, and the fix was validated the same way (`GET /` 200, `/auth/me` 401, login validation 400) before it was pushed.
 
 **The README curl matrix (`Verify the members API`)** was run against the local API. All 16 steps returned the expected status and `code`:
 
@@ -306,16 +319,11 @@ The database was reseeded afterwards. A separate `pg` connection read `tenant_us
   - "Try again" showing `aria-busy` and recovering.
 
   The empty state stays unit-tested only, because the API can't produce it.
+- **Railway → Vercel + Neon (hosting):** TASKS.md puts the API and database on Railway. Its free option is a 30-day trial, so the API runs as a second Vercel project with a Neon Postgres database instead. Vercel's NestJS launcher never resolves `app.listen()`, so `main.ts` exports the Express handler when `VERCEL` is set rather than awaiting `listen()`.
 
 ## Incomplete requirements and limitations
 
-- **Hosting is not done.** The project owner skipped the Railway/Vercel step, so there are no live portal or API URLs, and the "To do: hosting" boxes in TASKS.md are unticked. Next steps, as in TASKS.md:
-  1. Create the Railway Postgres and API service with build `pnpm install --frozen-lockfile && pnpm api:build`, pre-deploy `pnpm db:deploy` (applies `add_user_status`) and start `pnpm api:start`.
-  2. Set `DATABASE_URL`, `JWT_SECRET`, `JWT_EXPIRES_IN=1d` and `PORTAL_URL`.
-  3. Seed through the public database URL, then check that `curl` login returns a token.
-  4. Create the Vercel project with Root Directory `app/portal` and `NEXT_PUBLIC_API_URL`, then set `PORTAL_URL` on Railway.
-  5. Add both URLs to TASKS.md and the README.
-- **No git history in this working copy.** The work was done in an unpacked copy of the repo, so the `git ls-files` secret checks could not run; the root `.gitignore` covers `.env*` except `.env.example`. The project owner sets up the private fork and adds `tenant-portal-member-orgchart-plan.md` and `design reference/` to `.git/info/exclude` (not `.gitignore`), so the working plan and the local design files are never committed.
+- **Hosting deviates from TASKS.md.** The API and database run on Vercel and Neon instead of Railway (see Hosting under [Design decisions and assumptions](#design-decisions-and-assumptions)). The Railway steps in TASKS.md are therefore unticked; the Vercel and submission steps are done.
 - **Functional requirements:** none of the members-page requirements is unmet.
 - **Account status is display-only.** A SUSPENDED user can still sign in and be promoted.
 - **The empty state can't be reached through the API.** The viewer is always a member of the tenant, so a list is never empty. It is a defensive fallback with unit coverage only (`members-view-state.spec.ts`, `members-copy.spec.ts`).
@@ -333,6 +341,7 @@ The database was reseeded afterwards. A separate `pg` connection read `tenant_us
 - **No login rate limit.** Timing no longer reveals usernames, but passwords can still be guessed without limit.
 - **No pagination.** The whole member list is sent to the client, which is fine for the seed but not for large tenants.
 - **Dependency surface.** The portal has several UI and state libraries; each is justified above, and the chart is lazy.
+- **Serverless cold starts.** The first request after a quiet period waits for a Vercel function to boot Nest and for Neon to resume, typically a few seconds.
 - **Error-path refetch.** An immediate refetch after an error code (for example `ROLE_CHANGE_CONFLICT`) can briefly show another member's pending optimistic role as its old value, until that member's own change settles.
 
 ## What I'd improve before production
@@ -350,21 +359,19 @@ The database was reseeded afterwards. A separate `pg` connection read `tenant_us
 
 ## Submission message
 
-Ready to paste once the fork exists. Replace the placeholders; if hosting is still skipped, keep the "not deployed" line instead of the two URLs.
-
 ```text
 Hi,
 
 Here is my submission for the Tenant Member Management assessment.
 
-- Repository (private fork, reviewers added as collaborators): <FORK_URL>
-- Portal: <PORTAL_URL>   (not deployed yet: hosting was skipped at the project owner's request)
-- API: <API_URL>         (not deployed yet: hosting was skipped at the project owner's request)
-- Submission notes: <FORK_URL>/blob/<DEFAULT_BRANCH>/SUBMISSION.md
-- Where I disagreed with the repo or my AI: <FORK_URL>/blob/<DEFAULT_BRANCH>/SUBMISSION.md#where-i-disagreed-with-the-repo-or-my-ai
+- Repository: https://github.com/MaulanaIT/tenant-portal (rej@benoz.ai invited)
+- Portal: https://tenant-portal-navy.vercel.app (sign in as alice / 123456)
+- API: https://tenant-portal-api-two.vercel.app
+- Submission notes: https://github.com/MaulanaIT/tenant-portal/blob/main/SUBMISSION.md
+- Where I disagreed with the repo or my AI: https://github.com/MaulanaIT/tenant-portal/blob/main/SUBMISSION.md#where-i-disagreed-with-the-repo-or-my-ai
 
-Summary: a members page at /dashboard/members (List and Chart views) with role changes for tenant admins. The API takes the tenant from the path and checks membership and role in the database on every request (the x-tenant-id header and JWT role claims are not trusted), validates roles with @IsEnum, and runs role changes in a locked transaction that refuses self-demotion. Tests: API Jest 41 unit + 23 HTTP, portal Jest 204 unit, Playwright 43 end-to-end with axe in light and dark. Run instructions are in the README.
+Summary: a members page at /dashboard/members (List and Chart views) with role changes for tenant admins. The API takes the tenant from the path and checks membership and role in the database on every request (the x-tenant-id header and JWT role claims are not trusted), validates roles with @IsEnum, and runs role changes in a locked transaction that refuses self-demotion. Tests: API Jest 41 unit + 23 HTTP, portal Jest 204 unit, Playwright 43 end-to-end with axe in light and dark. Hosting is Vercel + Neon instead of Railway (free, no trial expiry). Run instructions are in the README.
 
 Thanks,
-<YOUR_NAME>
+Maulana
 ```

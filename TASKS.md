@@ -85,7 +85,9 @@ The API and its database go on **Railway**, and the portal goes on **Vercel**. D
 
 ### 1. Railway: PostgreSQL and API
 
-- [ ] Push the repo to GitHub.
+> Deviation: the API runs as a second Vercel project (Root Directory `app/api`, NestJS preset) and PostgreSQL on Neon, because Railway's free option is a 30-day trial. The Railway steps below were not used; see SUBMISSION.md.
+
+- [x] Push the repo to GitHub.
 - [ ] Create a Railway project and add a **PostgreSQL** database.
 - [ ] Add a service from the GitHub repo for the API. Leave **Root Directory** empty: pnpm needs the workspace root and its lockfile.
 - [ ] Set the service's commands:
@@ -118,15 +120,15 @@ The API and its database go on **Railway**, and the portal goes on **Vercel**. D
 
 ### 2. Vercel: portal
 
-- [ ] Import the GitHub repo into Vercel.
-- [ ] Set **Root Directory** to `app/portal`. Vercel detects Next.js and pnpm and installs from the workspace root.
-- [ ] Add the environment variable `NEXT_PUBLIC_API_URL` = `https://<api-domain>` (no trailing slash). It's built into the app, so redeploy after changing it.
-- [ ] Deploy, then set `PORTAL_URL` on Railway to the Vercel URL.
+- [x] Import the GitHub repo into Vercel.
+- [x] Set **Root Directory** to `app/portal`. Vercel detects Next.js and pnpm and installs from the workspace root.
+- [x] Add the environment variable `NEXT_PUBLIC_API_URL` = `https://<api-domain>` (no trailing slash). It's built into the app, so redeploy after changing it.
+- [x] Deploy, then set `PORTAL_URL` on Railway to the Vercel URL (set on the Vercel API project instead).
 - [ ] Check it: open the Vercel URL, sign in as `alice` / `123456`, switch between Acme and Globex, then sign out.
 
 ### 3. Submission
 
-- [ ] Add the live URLs here and to the README:
-  - Portal: `https://…vercel.app`
-  - API: `https://…up.railway.app`
-- [ ] Make sure no real secrets are committed. `.env` is git-ignored; only `.env.example` is tracked.
+- [x] Add the live URLs here and to the README:
+  - Portal: https://tenant-portal-navy.vercel.app
+  - API: https://tenant-portal-api-two.vercel.app
+- [x] Make sure no real secrets are committed. `.env` is git-ignored; only `.env.example` is tracked.

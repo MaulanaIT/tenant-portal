@@ -305,7 +305,7 @@ Background refetch (not designed): a 16px muted Spinner right after the summary 
 - **Selection:** opening the Select in a row, opening the ⋯ menu on a card, and every role change select that person (`selectedId`), as in the design.
 - **Your own row or card:** "(you)". The role badge gets a 12px lock icon inside a `<button aria-describedby>`. The tooltip "You can't change your own role" is self-controlled: it opens on hover, focus, **and tap**, and closes on blur, leave, Esc, scroll, and window resize. It is positioned above the trigger, centred, 6px away (`side="top"`, `sideOffset={6}`), `px-2.5 py-1.5 rounded-md text-xs font-medium whitespace-nowrap`, with a 150ms opacity transition.
 - The reason the control is locked on your own row is conveyed via `aria-describedby` and the tooltip above.
-- While pending, the trigger uses `aria-busy` and `aria-disabled` (not the `disabled` prop, so focus stays on the trigger). Changes are ignored in code, and the chevron is replaced by a spinner. A single global sr-only `aria-live="polite"` region announces "Saving role…".
+- While pending, the trigger uses `aria-busy` and `aria-di  sabled` (not the `disabled` prop, so focus stays on the trigger). Changes are ignored in code, and the chevron is replaced by a spinner. A single global sr-only `aria-live="polite"` region announces "Saving role…".
 - **Admin → Member** opens an `AlertDialog`:
   - Panel: max width 448px, p-6, rounded-xl, `--popover` + `--popover-border`, `--overlay` backdrop.
   - Title "Remove admin access for {name}?" (16/24 600), then the email in a muted colour.
